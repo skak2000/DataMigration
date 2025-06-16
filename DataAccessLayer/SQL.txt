@@ -1,0 +1,78 @@
+﻿CREATE TABLE DoneTable (
+    [TraceId] VARCHAR(200),
+    [Value] VARCHAR(100),
+    [TenantId] UNIQUEIDENTIFIER,
+    [InstanceId] UNIQUEIDENTIFIER,
+    [Success] BIT not null,   
+    [Key1] VARCHAR(50),
+    [Key2] VARCHAR(50),
+    [Key3] VARCHAR(50),
+     PRIMARY KEY (TraceId, InstanceId, TenantId)
+)
+
+CREATE TABLE ModuleRun 
+(
+    [Id] INT IDENTITY(1,1) PRIMARY KEY,
+    [ModulId] UNIQUEIDENTIFIER not null,
+    [LastRun] DATETIME not null,
+    [Success] BIT not null,
+    [ErrorCount] INT not null,
+    [RowCount] INT not null,
+    [SqlQuery] text,
+    [RunTimeMs] BIGINT,
+    [TenantId] UNIQUEIDENTIFIER not null,
+    [InstanceId] UNIQUEIDENTIFIER not null    
+)
+
+CREATE TABLE Customers 
+(
+    [Name] VARCHAR(255) not null,
+    [TenantId] UNIQUEIDENTIFIER not null,
+    [InstanceId] UNIQUEIDENTIFIER not null
+)
+
+CREATE TABLE [dbo].[DataMigrationLogger] (
+    [Id] INT IDENTITY(1,1) PRIMARY KEY,
+    [GetData] BIGINT NOT NULL,
+    [CreateDTO] BIGINT NOT NULL,
+    [GetMappings] BIGINT NOT NULL,
+    [SendData] BIGINT NOT NULL,
+    [BulkInsertMappings] BIGINT NOT NULL,
+    [InsertUpdateMappings] BIGINT NOT NULL,
+    [InsertMapping] BIGINT NOT NULL,
+    [RowCount] BIGINT NOT NULL,
+    [ModuleId] UNIQUEIDENTIFIER NOT NULL,
+    [CreateTime] DATETIME2 NOT NULL
+);
+
+
+
+  CREATE NONCLUSTERED INDEX IX_MyIndex_Keys
+ON SimpleChapters ([PublicId], [TraceId], [TenantId], [InstanceId]);
+
+
+DoneTable:
+        CREATE NONCLUSTERED INDEX IX_MyIndex_Keys
+ON [DoneTable_e1c9259b-d568-4aa0-89c6-f67c3d05fa99] ([TraceId], [TenantId], [InstanceId],[Key1]
+      ,[Key2]
+      ,[Key3]);
+
+
+
+CREATE TABLE DoneTable (
+    [TraceId] VARCHAR(200),
+    [Value] VARCHAR(100),
+    [TenantId] UNIQUEIDENTIFIER,
+    [InstanceId] UNIQUEIDENTIFIER,
+    [Success] BIT not null,   
+    [Key1] VARCHAR(50),
+    [Key2] VARCHAR(50),
+    [Key3] VARCHAR(50)    
+)
+
+
+
+  CREATE NONCLUSTERED INDEX BasicIndex
+ON [StatusOnlineStory_BCAF9BF9-DF49-482E-A7C6-016D48E58F36_EF81A99A-F598-4DDD-B1B7-008F7924539C] (
+    [StoryId], [AuthorNameId]
+);

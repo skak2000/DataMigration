@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataMigration", "DataMigration\DataMigration.csproj", "{6F0836AB-03A8-44C3-84E4-9A91795C6B88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{3DB48E4A-8930-400B-B69A-E11F9497C912}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F0836AB-03A8-44C3-84E4-9A91795C6B88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F0836AB-03A8-44C3-84E4-9A91795C6B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F0836AB-03A8-44C3-84E4-9A91795C6B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F0836AB-03A8-44C3-84E4-9A91795C6B88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DB48E4A-8930-400B-B69A-E11F9497C912}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DB48E4A-8930-400B-B69A-E11F9497C912}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DB48E4A-8930-400B-B69A-E11F9497C912}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DB48E4A-8930-400B-B69A-E11F9497C912}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77F2B684-1D0D-4074-8FEA-0540AACB9410}
+	EndGlobalSection
+EndGlobal
