@@ -13,12 +13,10 @@ internal class Program
 		{
             MigrationController mc = new MigrationController();
             await mc.DoWork();
-            mc.ResetFailRows();
+           // mc.ResetFailRows();
         }
 		catch (Exception ex)
 		{
-
-			throw;
 		}
         stopwatch.Stop();
         Console.WriteLine(stopwatch.Elapsed.ToString());

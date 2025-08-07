@@ -49,9 +49,7 @@ namespace DataMigration.Core
                     bulkCopy.WriteToServer(dataInput);
                 }
 
-                Console.WriteLine("BulkInsert DoneTable: " + stopwatch.ElapsedMilliseconds);
-
-                DataLogger.AddLog(30, stopwatch.ElapsedMilliseconds, Guid.Empty, "BulkInsert mappings");
+                DataLogger.AddLog(30, stopwatch.ElapsedMilliseconds, Guid.Empty, "BulkInsert DoneTable");
                 stopwatch.Restart();
 
                 updateColumns = RemoveProtectedColumns(updateColumns);
@@ -81,8 +79,7 @@ namespace DataMigration.Core
                     command.ExecuteNonQuery();
                 }
 
-                Console.WriteLine("InsertUpdateQuery: " + stopwatch.ElapsedMilliseconds);
-                DataLogger.AddLog(32, stopwatch.ElapsedMilliseconds, Guid.Empty, "CreateInsertUpdate mappings");
+                DataLogger.AddLog(32, stopwatch.ElapsedMilliseconds, Guid.Empty, "InsertUpdate mappings");
                 stopwatch.Restart();
             }
         }

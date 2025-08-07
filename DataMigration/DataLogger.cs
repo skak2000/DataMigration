@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Models;
+using System.Diagnostics;
 
 namespace DataMigration
 {
@@ -16,6 +17,8 @@ namespace DataMigration
                 Action = action
             };
             logger.Add(log);
+
+            Console.WriteLine($"{action}: " + time);
         }
 
         public static DataMigrationLogger GetLastLog(Guid ModuleId, int rows)
@@ -50,7 +53,11 @@ namespace DataMigration
                 }
                 else if (item.Number == 35)
                 {
-                    log.InsertMapping = item.Time;
+                    log.InsertMappingTotal = item.Time;
+                }
+                else if (item.Number == 50)
+                {
+                    log.TotalTime = item.Time;
                 }
 
             }

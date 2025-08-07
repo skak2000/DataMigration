@@ -47,7 +47,7 @@ public partial class DataSyncCoreContext : DbContext
 
         modelBuilder.Entity<DataMigrationLogger>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__DataMigr__3214EC0795BEF7D9");
+            entity.HasKey(e => e.Id).HasName("PK__DataMigr__3214EC073299D3B7");
 
             entity.ToTable("DataMigrationLogger");
 
@@ -56,21 +56,12 @@ public partial class DataSyncCoreContext : DbContext
 
         modelBuilder.Entity<DoneTable>(entity =>
         {
-            entity.HasKey(e => new { e.TraceId, e.InstanceId, e.TenantId }).HasName("PK__DoneTabl__75224C4F343B70DE");
+            entity.HasKey(e => e.TraceId).HasName("PK__DoneTabl__70C9CE9CF33BAEF3");
 
             entity.ToTable("DoneTable");
 
             entity.Property(e => e.TraceId)
                 .HasMaxLength(200)
-                .IsUnicode(false);
-            entity.Property(e => e.Key1)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Key2)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Key3)
-                .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.Value)
                 .HasMaxLength(100)
@@ -79,7 +70,7 @@ public partial class DataSyncCoreContext : DbContext
 
         modelBuilder.Entity<ModuleRun>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ModuleRu__3214EC07F67D4FE0");
+            entity.HasKey(e => e.Id).HasName("PK__ModuleRu__3214EC07DD58497F");
 
             entity.ToTable("ModuleRun");
 
@@ -104,8 +95,6 @@ public partial class DataSyncCoreContext : DbContext
             entity.HasKey(e => e.ChapterId).HasName("PK_StatusOnline_Chapter_ChapterId");
 
             entity.ToTable("StatusOnline_Chapter");
-
-            entity.HasIndex(e => e.StoryId, "StoryId");
 
             entity.Property(e => e.ChapterNextChapter).HasDefaultValueSql("(NULL)");
             entity.Property(e => e.ChapterPreChapter).HasDefaultValueSql("(NULL)");
@@ -134,8 +123,6 @@ public partial class DataSyncCoreContext : DbContext
             entity.HasKey(e => e.StoryId).HasName("PK_StatusOnline_Story_StoryId");
 
             entity.ToTable("StatusOnline_Story");
-
-            entity.HasIndex(e => e.AuthorNameId, "AuthorNameId");
 
             entity.Property(e => e.AuthorNameId).HasDefaultValueSql("(NULL)");
             entity.Property(e => e.StoryCompleted).HasDefaultValueSql("(NULL)");

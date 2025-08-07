@@ -8,7 +8,7 @@ namespace DataMigration.Refit
 
         public BookService()
         {
-            bookApi = RestService.For<IBookService>("https://localhost:32771/api");
+            bookApi = RestService.For<IBookService>("https://localhost:32769/api");
         }
     }
 }

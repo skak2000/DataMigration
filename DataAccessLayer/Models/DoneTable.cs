@@ -9,15 +9,11 @@ public partial class DoneTable
 
     public string? Value { get; set; }
 
-    public Guid TenantId { get; set; }
-
-    public Guid InstanceId { get; set; }
-
     public bool Success { get; set; }
 
-    public string? Key1 { get; set; }
+    public int? Key1 { get; set; }
 
-    public string? Key2 { get; set; }
+    public int? Key2 { get; set; }
 
-    public string? Key3 { get; set; }
+    public int? Key3 { get; set; }
 }

@@ -10,6 +10,7 @@ namespace DataMigration.Core
         public virtual Guid InstanceId { get; set; }
         public virtual int Errors { get; set; }
         public virtual Guid ModuleId { get; set; }
+        public virtual string Name { get; set; }
         public virtual int PriorityLevel { get; set; }
 
         public void Initialize(Guid tenantId, Guid instanceId, int errors)

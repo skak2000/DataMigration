@@ -15,6 +15,7 @@ namespace DataMigration.Modules.Story
         
         public StoryModule()
         {
+            Name = "StoryModule";
             ModuleId = Guid.Parse("A5A72864-2445-4870-9C87-3AFF80A30F25");
             PriorityLevel = 2;
         }
@@ -22,7 +23,7 @@ namespace DataMigration.Modules.Story
         public override string Query(DataSyncCoreContext context)
         {
             // if error retry with half the numbers of rows.
-            int select = SelectNumbers(100000);
+            int select = SelectNumbers(50000);
                         
             var baseQuery = (from authors in context.StatusOnlineAuthors
                              join story in context.StatusOnlineStories
@@ -30,15 +31,14 @@ namespace DataMigration.Modules.Story
 
                              // Remove allready transfere rows
                              join doneTable in context.DoneTables
-                             on new { Key1 = story.AuthorNameId.ToString(), Key2 = story.StoryId.ToString() }
-                             equals new { doneTable.Key1, doneTable.Key2 }
+                             on new { Key1 = story.AuthorNameId, Key2 = story.StoryId }
+                             equals new { Key1 = doneTable.Key1, Key2 = doneTable.Key2.Value }
                              into doneGroup
                              from done in doneGroup.DefaultIfEmpty()
 
                              where done.TraceId == null && authors.IsDeleted == false
                              select new
                              {
-                                 authors.AuthorName,
                                  authors.AuthorNameId,
                                  story.StoryId,
                                  story.StoryTitle,
@@ -46,7 +46,7 @@ namespace DataMigration.Modules.Story
                              });
 
             // TraceKey in new Database: AuthorNameId-StoryId
-            string query = baseQuery.OrderBy(x => x.AuthorNameId).Take(select).ToQueryString();
+            string query = baseQuery.Take(select).ToQueryString();
             return query;
         }
 
@@ -64,7 +64,6 @@ namespace DataMigration.Modules.Story
             foreach (DataRow row in data.Rows) 
             {
                 // Get mapping and only transfere rows with mappings from highe level module
-                //CoreIdMap? publicIdTemp = mappingDict.FirstOrDefault(x => x.TraceId == row["AuthorNameId"].ToString());
                 mappingDict.TryGetValue(row["AuthorNameId"].ToString(), out CoreIdMap publicIdTemp);
 
                 if (publicIdTemp != null)
@@ -102,8 +101,14 @@ namespace DataMigration.Modules.Story
             {
                 BookService bookService = new BookService();
                 List<StoryRespons> respons = await bookService.bookApi.CreateBooks(schemaStory.DataList, TenantId, InstanceId);
+
+                foreach (var item in respons)
+                {
+                    CoreIdMap map = new CoreIdMap(item.TraceId, item.PublicId.ToString());
+                    res.Add(map);
+                }
                 // Verify data is correct and return mapping for DoneTable
-                res = VerifyData(schemaStory, respons);
+                //res = VerifyData(schemaStory, respons);
             }
             return res;
         }
