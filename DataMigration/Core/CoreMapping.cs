@@ -122,7 +122,7 @@ namespace DataMigration.Core
         /// <param name="success"></param>
         public void InsertMapping(List<CoreIdMap> res, bool success)
         {
-            // Get table layout
+            // Get table layout            
             string doneTable = $"DoneTable_{ModuleId}";
 
             if (AppConfig.Turbo)
@@ -140,10 +140,9 @@ namespace DataMigration.Core
             foreach (CoreIdMap item in res)
             {
                 DataRow newRow = table.NewRow();
-                //newRow["Id"] = Guid.NewGuid();
                 newRow["TraceId"] = item.TraceId;
                 newRow["Value"] = item.Value;
-                
+
                 if (AppConfig.Turbo == false)
                 {
                     newRow["TenantId"] = TenantId;
@@ -151,8 +150,8 @@ namespace DataMigration.Core
                 }
 
                 newRow["Key1"] = item.Key1;
-                newRow["Key2"] = item.Key2;
-                newRow["Key3"] = item.Key3;
+                newRow["Key2"] = item.Key2 == null ? -1 : item.Key2;
+                newRow["Key3"] = item.Key3 == null ? -1 : item.Key3;
                 newRow["success"] = success;
                 table.Rows.Add(newRow);
             }

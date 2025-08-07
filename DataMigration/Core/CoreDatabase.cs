@@ -33,7 +33,7 @@ namespace DataMigration.Core
         {
             string tableName = $"DoneTable_{moduleId}";
 
-            string sqlCreateDoneTable = $"CREATE TABLE [{tableName}] ([TraceId] VARCHAR(100), [Value] VARCHAR(100), [TenantId] UNIQUEIDENTIFIER, [InstanceId] UNIQUEIDENTIFIER, [Success] [bit], [Key1] VARCHAR(50), [Key2] VARCHAR(50), [Key3] VARCHAR(50))";
+            string sqlCreateDoneTable = $"CREATE TABLE [{tableName}] ([TraceId] VARCHAR(100), [Value] VARCHAR(100), [TenantId] UNIQUEIDENTIFIER, [InstanceId] UNIQUEIDENTIFIER, [Success] [bit], [Key1] VARCHAR(50), [Key2] VARCHAR(50), [Key3] VARCHAR(50)) ";
 
             if (AppConfig.Turbo)
             {
@@ -42,8 +42,7 @@ namespace DataMigration.Core
                 string mod = moduleId.ShortGuid();
 
                 tableName = $"DoneTable_{mod}_{ten}_{inst}";
-
-                sqlCreateDoneTable = $"CREATE TABLE [{tableName}] ([TraceId] VARCHAR(100), [Value] VARCHAR(100), [Success] [bit], [Key1] VARCHAR(50), [Key2] VARCHAR(50), [Key3] VARCHAR(50))";
+                sqlCreateDoneTable = $"CREATE TABLE [{tableName}] ([TraceId] VARCHAR(100), [Value] VARCHAR(100), [Success] [bit], [Key1] int, [Key2] int, [Key3] int) ";
             }
 
             string query = $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' and TABLE_NAME like '{tableName}'";
@@ -59,7 +58,7 @@ namespace DataMigration.Core
 
                     if (exists == null)
                     {
-                        string sqlCreateDoneTableOld = $"CREATE TABLE [DoneTable_{moduleId}] ([TraceId] VARCHAR(255), [Value] VARCHAR(255), [TenantId] UNIQUEIDENTIFIER, [InstanceId] UNIQUEIDENTIFIER, [Success] [bit], PRIMARY KEY (TraceId, InstanceId, TenantId), [Key1] VARCHAR(255), [Key2] VARCHAR(255), [Key3] VARCHAR(255))";
+                       // string sqlCreateDoneTableOld = $"CREATE TABLE [DoneTable_{moduleId}] ([TraceId] VARCHAR(255), [Value] VARCHAR(255), [TenantId] UNIQUEIDENTIFIER, [InstanceId] UNIQUEIDENTIFIER, [Success] [bit], PRIMARY KEY (TraceId, InstanceId, TenantId), [Key1] VARCHAR(255), [Key2] VARCHAR(255), [Key3] VARCHAR(255))";
                         using (SqlCommand createCmd = new SqlCommand(sqlCreateDoneTable, connection))
                         {
                             createCmd.ExecuteNonQuery();
@@ -106,22 +105,14 @@ namespace DataMigration.Core
         private DataTable GetDatabaseTable(string query)
         {
             DataTable table = new DataTable();
-            try
+            using (SqlConnection connection = new SqlConnection(AppConfig.ConnectionString))
             {
-                using (SqlConnection connection = new SqlConnection(AppConfig.ConnectionString))
+                connection.Open();
+                using (SqlDataAdapter adapter = new SqlDataAdapter(query, connection))
                 {
-                    connection.Open();
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(query, connection))
-                    {
-                        adapter.SelectCommand.CommandTimeout = 60;
-                        adapter.Fill(table);
-                    }
+                    adapter.SelectCommand.CommandTimeout = 120;
+                    adapter.Fill(table);
                 }
-            }
-            catch (Exception es)
-            {
-
-                throw;
             }
             return table;
         }

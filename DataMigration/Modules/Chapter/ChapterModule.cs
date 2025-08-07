@@ -13,6 +13,7 @@ namespace DataMigration.Modules.Chapter
     {
         public ChapterModule()
         {
+            Name = "ChapterModule";
             ModuleId = Guid.Parse("A2338BC5-0A10-4B89-BB29-6F699E6364EA");
             PriorityLevel = 3;
         }
@@ -20,20 +21,21 @@ namespace DataMigration.Modules.Chapter
         public override string Query(DataSyncCoreContext context)
         {
             // if error retry with half the numbers of rows.
-            int select = SelectNumbers(100000);
+            int select = SelectNumbers(50000);
 
             var baseQuery = (from authors in context.StatusOnlineAuthors
-                             join story in context.StatusOnlineStories.OrderBy(x => x.StoryId)
+                             join story in context.StatusOnlineStories
                              on authors.AuthorNameId equals story.AuthorNameId
                              join chapter in context.StatusOnlineChapters
                              on story.StoryId equals chapter.StoryId
 
                              // Remove allready transfere rows
-                             join doneTable in context.DoneTables 
-                             on (story.StoryId.ToString() + "_" + chapter.ChapterId.ToString())
-                             equals doneTable.TraceId into doneGroup
+                             join doneTable in context.DoneTables
+                             on new { Key1 = story.StoryId, Key2 = chapter.ChapterId }
+                             equals new { Key1 = doneTable.Key1.Value, Key2 = doneTable.Key2.Value }
+                             into doneGroup
                              from done in doneGroup.DefaultIfEmpty()
-                             where done == null && authors.IsDeleted == false
+                             where done.TraceId == null && authors.IsDeleted == false
                              select new
                              {
                                  authors.AuthorNameId,
@@ -47,7 +49,7 @@ namespace DataMigration.Modules.Chapter
                              });
 
             // TraceKey in new Database: StoryId-ChapterId
-            string query = baseQuery.OrderBy(x=>x.StoryId).Take(select).ToQueryString();
+            string query = baseQuery.Take(select).ToQueryString();
             return query;
         }
 
@@ -101,8 +103,15 @@ namespace DataMigration.Modules.Chapter
                 BookService bookService = new BookService();
 
                 List<ChapterRespons> respons = await bookService.bookApi.CreateChapters(model.DataList, TenantId, InstanceId);
+
+                foreach (var item in respons)
+                {
+                    CoreIdMap map = new CoreIdMap(item.TraceId, item.PublicId.ToString());
+                    res.Add(map);
+                }
+
                 // Verify data is correct and return mapping for DoneTable
-                res = VerifyData(model, respons);
+                //res = VerifyData(model, respons);
             }
             return res;
         }

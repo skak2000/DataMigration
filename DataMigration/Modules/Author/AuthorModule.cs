@@ -12,6 +12,7 @@ namespace DataMigration.Modules.Author
 
         public AuthorModule()
         {
+            Name = "AuthorModule";
             ModuleId = Guid.Parse("E1C9259B-D568-4AA0-89C6-F67C3D05FA99");
             PriorityLevel = 1;
         }
@@ -19,7 +20,7 @@ namespace DataMigration.Modules.Author
         public override string Query(DataSyncCoreContext context)
         {
             // if error retry with half the numbers of rows.
-            int select = SelectNumbers(100000);
+            int select = SelectNumbers(50000);
 
 
             var baseQuery = (from authors in context.StatusOnlineAuthors
@@ -27,8 +28,8 @@ namespace DataMigration.Modules.Author
                                  // Remove allready transfere rows
                              join doneTable in context.DoneTables
                              //.Where(x => x.TenantId == TenantId && x.InstanceId == InstanceId)
-                             on authors.AuthorNameId.ToString()
-                             equals doneTable.Key1 into doneGroup
+                             on authors.AuthorNameId
+                             equals doneTable.Key1.Value into doneGroup
                              from done in doneGroup.DefaultIfEmpty()
 
                              where (done.TraceId == null) && authors.IsDeleted == false
@@ -39,25 +40,7 @@ namespace DataMigration.Modules.Author
                                  TraceId = authors.AuthorNameId
                              });
 
-            //var baseQuery = (from authors in context.StatusOnlineAuthors
-
-            //                 // Remove allready transfere rows
-            //                 join doneTable in context.DoneTables
-            //                 .Where(x => x.TenantId == TenantId && x.InstanceId == InstanceId)
-            //                 on authors.AuthorNameId.ToString()
-            //                 equals doneTable.TraceId into doneGroup
-            //                 from done in doneGroup.DefaultIfEmpty()
-
-            //                 // ToDo Fileter on [Tenant] & [Instance]
-            //                 where done == null && authors.IsDeleted == false
-            //                 select new
-            //                 {
-            //                     authors.AuthorName,
-            //                     authors.AuthorNameId,
-            //                     TraceId = authors.AuthorNameId.ToString()
-            //                 });
-
-            // AuthorName cannot be changed in this system.
+                    // AuthorName cannot be changed in this system.
             // TraceKey in new Database: AuthorNameId
 
             string query = baseQuery.Take(select).ToQueryString();
@@ -86,8 +69,15 @@ namespace DataMigration.Modules.Author
             {
                 BookService bookService = new BookService();
                 List<AuthorRespons> respons = await bookService.bookApi.CreateAuthors(schema.DataList, TenantId, InstanceId);
+
+                foreach (var item in respons)
+                {
+                    CoreIdMap map = new CoreIdMap(item.TraceId, item.PublicId.ToString());
+                    res.Add(map);
+                }
+
                 // Verify data is correct and return mapping for DoneTable
-                res = VerifyData(schema, respons);
+                //res = VerifyData(schema, respons);
             }
             return res;
         }

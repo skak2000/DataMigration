@@ -17,10 +17,15 @@ namespace DataMigration
 
         public async Task DoWork()
         {
-            var customers = context.Customers.ToList();
+            Stopwatch sw = new Stopwatch();
+            var customers = context.Customers.ToList();//.Where(x => x.TenantId == Guid.Parse("2E2D2610-78F7-42F0-95C7-038276D5DEC7")).ToList();
             foreach (Customer item in customers)
             {
-                await RunCustomerAsync(item.TenantId, item.InstanceId);
+                Console.WriteLine("New customer start");
+                sw.Start();
+                await RunCustomerAsync(item.TenantId, item.InstanceId);                
+                Console.WriteLine("Time: " + sw.Elapsed);
+                sw.Restart();
             }
             //Guid TenantId = Guid.Parse("9B55F1B3-82BD-404A-999E-F796DE2285B3");
             //Guid InstanceId = Guid.Parse("1E7A2C6D-4602-44DC-AF8F-63C6BD85329F");          
@@ -39,6 +44,9 @@ namespace DataMigration
 
             foreach (BasicModule module in modules)
             {
+                Console.WriteLine("Start: " + module.Name);
+                Console.WriteLine("");
+                Console.WriteLine("");
                 ModuleRun? lastRun = await context.ModuleRuns.OrderBy(x => x.LastRun).FirstOrDefaultAsync(x => x.ModulId == module.ModuleId && x.TenantId == TenantId && x.InstanceId == InstanceId);
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
@@ -68,20 +76,17 @@ namespace DataMigration
               
                     try
                     {
-                        BasicDTO dto = module.CreateDTO(data);
-                        Console.WriteLine("CreateDTO: " + stopwatch.ElapsedMilliseconds);
+                        BasicDTO dto = module.CreateDTO(data);                      
                         DataLogger.AddLog(10, stopwatch.ElapsedMilliseconds, module.ModuleId, "CreateDTO");
                         stopwatch.Restart();
 
-                        List<CoreIdMap> res = await module.SendData(dto);                       
-                        Console.WriteLine("SendData: " + stopwatch.ElapsedMilliseconds);
+                        List<CoreIdMap> res = await module.SendData(dto);                 
                         DataLogger.AddLog(20, stopwatch.ElapsedMilliseconds, module.ModuleId, "SendData");
                         stopwatch.Restart();
 
                         CoreMapping cm = new CoreMapping(module.ModuleId, module.TenantId, module.InstanceId);
                         cm.InsertMapping(res, true);
-                        Console.WriteLine("InsertMapping: " + stopwatch.ElapsedMilliseconds);
-                        DataLogger.AddLog(35, stopwatch.ElapsedMilliseconds, module.ModuleId, "InsertMapping");
+                        DataLogger.AddLog(35, stopwatch.ElapsedMilliseconds, module.ModuleId, "InsertMapping Total");
 
                         lastRun = HandleSuccess(lastRun, res.Count, sqlQuery, time.ElapsedMilliseconds);                        
                     }
@@ -91,6 +96,9 @@ namespace DataMigration
                         lastRun = HandleFailure(module, lastRun, data, ex.Message + "" +  ex.StackTrace, time.ElapsedMilliseconds);                        
                     }
 
+
+                    DataLogger.AddLog(50, time.ElapsedMilliseconds, module.ModuleId, "Total time");
+
                     sqlQuery = module.Query(context);
                                        
                     Console.WriteLine("");
@@ -98,14 +106,15 @@ namespace DataMigration
                     DataMigrationLogger log = DataLogger.GetLastLog(module.ModuleId, data.Rows.Count);
                     context.DataMigrationLoggers.Add(log);
                     context.SaveChanges();
+                    time.Restart();
 
                     stopwatch.Restart();
                     data = cd.GetData(sqlQuery, module.ModuleId);
-                    Console.WriteLine("GetData: " + stopwatch.ElapsedMilliseconds);
                     Console.WriteLine("Rows: " + data.Rows.Count);
                     DataLogger.AddLog(5, stopwatch.ElapsedMilliseconds, module.ModuleId, "GetData");
                     stopwatch.Restart();
-                    time.Restart();
+
+                   
                     failSafe = data.Rows.Count > 0;
                 }
             }

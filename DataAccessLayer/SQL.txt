@@ -39,7 +39,8 @@ CREATE TABLE [dbo].[DataMigrationLogger] (
     [SendData] BIGINT NOT NULL,
     [BulkInsertMappings] BIGINT NOT NULL,
     [InsertUpdateMappings] BIGINT NOT NULL,
-    [InsertMapping] BIGINT NOT NULL,
+    [InsertMappingTotal] BIGINT NOT NULL,  
+    [TotalTime] BIGINT NOT NULL,
     [RowCount] BIGINT NOT NULL,
     [ModuleId] UNIQUEIDENTIFIER NOT NULL,
     [CreateTime] DATETIME2 NOT NULL
@@ -60,14 +61,12 @@ ON [DoneTable_e1c9259b-d568-4aa0-89c6-f67c3d05fa99] ([TraceId], [TenantId], [Ins
 
 
 CREATE TABLE DoneTable (
-    [TraceId] VARCHAR(200),
+    [TraceId] VARCHAR(200) PRIMARY KEY ,
     [Value] VARCHAR(100),
-    [TenantId] UNIQUEIDENTIFIER,
-    [InstanceId] UNIQUEIDENTIFIER,
     [Success] BIT not null,   
-    [Key1] VARCHAR(50),
-    [Key2] VARCHAR(50),
-    [Key3] VARCHAR(50)    
+    [Key1] int,
+    [Key2] int,
+    [Key3] int    
 )
 
 

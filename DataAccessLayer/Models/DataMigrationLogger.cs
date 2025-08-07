@@ -19,7 +19,9 @@ public partial class DataMigrationLogger
 
     public long InsertUpdateMappings { get; set; }
 
-    public long InsertMapping { get; set; }
+    public long InsertMappingTotal { get; set; }
+
+    public long TotalTime { get; set; }
 
     public long RowCount { get; set; }
 
