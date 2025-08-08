@@ -13,6 +13,8 @@ This guide outlines:
 
 - Error handling and retry logic
 
+
+
 1. Initial Setup
 Create Basic Tables
 Before running migrations, create the following tables by executing the SQL script SQL.txt:
@@ -35,6 +37,8 @@ Scaffold-DbContext "ConnectionString" Microsoft.EntityFrameworkCore.SqlServer `
 
 CoreDatabase class -> ReplaceTableNames: Setup your naming scheme if you use a TenantId & Instance naming else remove it
 
+
+
 2. Database Design Notes
 In this system, each table name contains a TenantId and InstanceId.
 Despite different names, all tables share the same structure.
@@ -55,6 +59,8 @@ The actual data resides in tenant-specific tables such as:
 - StatusOnlineChapter_a7047609-d23a-4f3a-8f99-bac187a2872e_9801456c-f65d-43a2-9bc2-19ab4fdb60b7
 - StatusOnlineStory_a7047609-d23a-4f3a-8f99-bac187a2872e_9801456c-f65d-43a2-9bc2-19ab4fdb60b7
 
+
+
 3. Module Structure
 Each migration module represents one data type (e.g., Author, Story, Chapter) and consists of three steps:
 
@@ -63,6 +69,7 @@ Each migration module represents one data type (e.g., Author, Story, Chapter) an
 2) CreateDTO – Transform and prepare the data for transfer.
 
 3) SendData – Send the data to the target API and store migration results.
+
 
 
 4. Priority Levels
@@ -77,6 +84,8 @@ Example Order:
 3) Chapter (PriorityLevel = 3)
 You cannot transfer a Story before its Author exists, and you cannot transfer a Chapter before its Story exists.
 
+
+
 5. Identifying Unique Records
 Each row in the source database must have a unique identifier.
 This can be a composite key built from multiple fields.
@@ -86,7 +95,9 @@ Story Key: story.AuthorNameId.ToString() + "_" + chapter.StoryId.ToString()
 Chapter Key: story.StoryId.ToString() + "_" + chapter.ChapterId.ToString()
 Store these identifiers in Key1, Key2, and Key3 or in TraceId.
 
+
 6. Step-by-Step Module Process
+
 6.1 Query
 Create a join to retrieve the required data.
 
@@ -95,6 +106,7 @@ Create a join to retrieve the required data.
 - Use 1–3 primary keys to uniquely identify each row.
 
 - Each module has its own DoneTable for tracking migration progress.
+
 
 6.2 CreateDTO
 - Map the source data to a Data Transfer Object (DTO) format.
@@ -105,12 +117,14 @@ Create a join to retrieve the required data.
 
 - Prepare the final DTO collection for transfer.
 
+
 6.3 SendData
 - Send the DTOs to the target API.
 
 - Receive and store TraceId and PublicId in the module’s DoneTable.
 
 - Optionally, run VerifyData by retrieving the inserted data to confirm a successful transfer.
+
 
 
 7. Error Handling & Retry Logic
@@ -123,6 +137,7 @@ When a batch transfer fails:
 3) Continue processing the remaining rows.
 
 4) Gradually scale the batch size back up after resolving the issue.
+
 
 
 8. Key Best Practices
