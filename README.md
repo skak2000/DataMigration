@@ -15,7 +15,7 @@ This guide outlines:
 
 
 
-1. Initial Setup
+## 1. Initial Setup
 Create Basic Tables
 Before running migrations, create the following tables by executing the SQL script SQL.txt:
 
@@ -39,7 +39,7 @@ CoreDatabase class -> ReplaceTableNames: Setup your naming scheme if you use a T
 
 
 
-2. Database Design Notes
+## 2. Database Design Notes
 In this system, each table name contains a TenantId and InstanceId.
 Despite different names, all tables share the same structure.
 
@@ -61,7 +61,7 @@ The actual data resides in tenant-specific tables such as:
 
 
 
-3. Module Structure
+## 3. Module Structure
 Each migration module represents one data type (e.g., Author, Story, Chapter) and consists of three steps:
 
 1) Query – Retrieve data from the source database.
@@ -72,7 +72,7 @@ Each migration module represents one data type (e.g., Author, Story, Chapter) an
 
 
 
-4. Priority Levels
+## 4. Priority Levels
 Modules have a PriorityLevel to define execution order.
 
 Example Order:
@@ -86,7 +86,7 @@ You cannot transfer a Story before its Author exists, and you cannot transfer a 
 
 
 
-5. Identifying Unique Records
+## 5. Identifying Unique Records
 Each row in the source database must have a unique identifier.
 This can be a composite key built from multiple fields.
 
@@ -96,9 +96,9 @@ Chapter Key: story.StoryId.ToString() + "_" + chapter.ChapterId.ToString()
 Store these identifiers in Key1, Key2, and Key3 or in TraceId.
 
 
-6. Step-by-Step Module Process
+## 6. Step-by-Step Module Process
 
-6.1 Query
+### 6.1 Query
 Create a join to retrieve the required data.
 
 - Exclude already transferred rows by joining with the module’s DoneTable.
@@ -108,7 +108,7 @@ Create a join to retrieve the required data.
 - Each module has its own DoneTable for tracking migration progress.
 
 
-6.2 CreateDTO
+### 6.2 CreateDTO
 - Map the source data to a Data Transfer Object (DTO) format.
 
 - If related entities are needed (e.g., Author ID for a Story), retrieve them from the corresponding module’s DoneTable.
@@ -118,7 +118,7 @@ Create a join to retrieve the required data.
 - Prepare the final DTO collection for transfer.
 
 
-6.3 SendData
+### 6.3 SendData
 - Send the DTOs to the target API.
 
 - Receive and store TraceId and PublicId in the module’s DoneTable.
@@ -127,7 +127,7 @@ Create a join to retrieve the required data.
 
 
 
-7. Error Handling & Retry Logic
+## 7. Error Handling & Retry Logic
 When a batch transfer fails:
 
 1) Reduce batch size and retry: 50,000 rows → 25,000 rows → 12,500 rows → … until the failing row is found.
@@ -140,7 +140,7 @@ When a batch transfer fails:
 
 
 
-8. Key Best Practices
+## 8. Key Best Practices
 - Keep PriorityLevel correct to avoid dependency errors.
 
 - Always track processed rows in the DoneTable.
