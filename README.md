@@ -51,9 +51,9 @@ The following layout tables are used only for structure, not for actual data:
 - SimpleChapters
 
 The actual data resides in tenant-specific tables such as:
-StatusOnlineAuthor_a7047609-d23a-4f3a-8f99-bac187a2872e_9801456c-f65d-43a2-9bc2-19ab4fdb60b7
-StatusOnlineChapter_a7047609-d23a-4f3a-8f99-bac187a2872e_9801456c-f65d-43a2-9bc2-19ab4fdb60b7
-StatusOnlineStory_a7047609-d23a-4f3a-8f99-bac187a2872e_9801456c-f65d-43a2-9bc2-19ab4fdb60b7
+- StatusOnlineAuthor_a7047609-d23a-4f3a-8f99-bac187a2872e_9801456c-f65d-43a2-9bc2-19ab4fdb60b7
+- StatusOnlineChapter_a7047609-d23a-4f3a-8f99-bac187a2872e_9801456c-f65d-43a2-9bc2-19ab4fdb60b7
+- StatusOnlineStory_a7047609-d23a-4f3a-8f99-bac187a2872e_9801456c-f65d-43a2-9bc2-19ab4fdb60b7
 
 3. Module Structure
 Each migration module represents one data type (e.g., Author, Story, Chapter) and consists of three steps:
